@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import countryData from '..\\data\\country_codes.json';
-import stateData from '..\\data\\state_codes.json'; 
-import RetrieveData from '.\\apicall';
+import countryData from './data/country_codes.json';
+import stateData from './data/state_codes.json'; 
+import retrieveData from './apicall.jsx';
 
 function App() {
   const [city, setCity] = useState("");
@@ -42,7 +42,7 @@ function App() {
   function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    setResult(RetrieveData(countryNameToCode(country), city, unit, state));
+    setResult(retrieveData(countryNameToCode(country), city, unit, state));
     setLoading(false);
     // Reset all fields after submission
     setCity("");
