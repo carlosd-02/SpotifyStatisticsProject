@@ -50,4 +50,6 @@ The project, as of early February 2026, is still in its initial stages. I have a
 7. On both cmds, run the following
   ``npm run dev``
   This should appear for the ./web cmd
+   ![A line saying Local: http://localhost:5173](refs/WebSuccessfulInit.png)
   And this on the ./api
+   ![A line saying Local: http://localhost:3001](refs/ApiSuccessfulInit.png)
