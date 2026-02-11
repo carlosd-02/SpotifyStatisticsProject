@@ -1,25 +1,16 @@
 # Overview
-Ideas for this project came about while searching for jobs after my departure from Microsoft in 2025. During my search, I noticed the demand for full-stack software engineers, particularly those accustomed to the use of AI (generative or not). I also noticed my last full stack project was nearly 4 years ago, and the relative lack of solo projects on my resume. I wanted to take this opportunity between jobs to work on a project that help hone my skills in full-stack engineering, while also exploring my interests in data analytics.
+A full-stack weather analytics dashboard to compare current conditions against historical patterns and highlight anomalies. Built with React + TypeScript (web) and Node.js + TypeScript (API) using OpenWeather data.
 
-## Who I Am
-My name is Carlos. 
-- UCI Class of 2024 (BS in Computer Science)
-- Microsoft Alumnus (Aug 2024 - Aug 2025)
-- Former coding instructor (May 2022 - Jun 2024)
-- Freelance AI Trainer with DataAnnotation (since Jan 2026)
-- Currently searching for a new software engineering (or related) position to explore my interests in coding
-On my free time, outside of coding, I love to draw, clean, and go down internet rabbit holes. The latter of these stems from my curiosity, which has definitely fueled my interest in this project.
-
-## The Problem I Want to Solve
-We may frequently say "this summer has been very hot", or "it hasn't rained much this year", but we don't always know for sure without data. We as humans are well-aware that we cayn "imagine" conclusions. The goal of this program is to make the differences in climate patterns in different regions more accessible to people more quickly, and to remove the guesswork behind if we are just imagining things about the weather.
+### The Problem I Want to Solve
+We may frequently say "this summer has been very hot", or "it hasn't rained much this year", but we don't always know for sure without data. The goal of this program is to make the differences in climate patterns in different regions more accessible to people more quickly, and to remove the guesswork behind if we are just imagining things about the weather.
 
 # Software Goals
 There are several goals in this project, either for the user or for myself.
-## For Users
-- To be able to retrieve weather data across the world in different periods from the past 40 years (as far back as OpenWeather API allows)
+### For Users
+- To be able to retrieve weather data across the world in different periods from the past with historical comparisons (as supported by OpenWeather endpoints).
 - For users to be able to easily see how current weather patterns differ from past years, to confirm if things are truly different or simply "in their head"
-- Training AI to be able to detect the true anomalous nature of modern weather in different places
-## Skills to train
+- Planned: anomaly detection models
+### Skills to train
 - Full-stack development
 - Healthy coding hygiene (CI/CD practices and extensive testing)
 - API calls and parsing
@@ -27,29 +18,44 @@ There are several goals in this project, either for the user or for myself.
 - Popular industry tools like TypeScript & React
 
 # Current Status
-The project, as of early February 2026, is still in its initial stages. I have a basic front and back end going that gives real-time weather updates.
-## Current Features
+The project is still in its initial stages. I have a basic front and back end going that gives real-time weather updates.
+#### Current Features
 - Real-time weather data for cities across the world
 - Ability to toggle units
-- A separated back and front end that communicate to collect and present data using NodeJS, TS, and React
-## Short-term objectives
+- A separated back and front end that communicate to collect and present data using Node.js, TypeScript, and React
+### Short-term objectives
 - Adding unit tests
 - Finish this README
 - Refactoring code for easier testing
 - Adding some sort CI/CD protections ensuring unit tests are passed before code can be merged
 - Adding extensive error-based logic to account for any erroneous inputs so that the website will not crash from user error
 
+# System Design
+### Architecture
+- `./web` is the React UI
+- `./api` is the Node API proxy, which hides the API key, adds validation, can later add caching
+### Security Measures
+- The API key is stored server-side in .env variables, and is never exposed to the client or to git
+
 # Usage Instructions
-1. [Download NodeJS and locally set up react.](w3schools)
-2. Obtain an OpenWeather API key.
-3. Download the repo
-4. Open a Command Prompt (cmd)
-5. Ensure you can use the npm commands in BOTH the ./web and ./api directories
-   ``npm -v``
-6. Open a second command prompt. Navigate one cmd to the ./web folder and the other to ./api
+0. Install Node.js locally if you have not already. Instructions for that can be found [here](https://nodejs.org/en/download)
+1. Open cmd and clone repo
+   ``git clone https://github.com/carlosd-02/WeatherTrendsProject.git``
+2. Obtain an OpenWeather API key. Instructions for this can be found on the OpenWeather website [here](https://openweathermap.org/api)
+3. Create api/.env, and fill in the following values (use the ./api/.env.example as your base):
+   ```OPENWEATHER_API_KEY=YOUR_OPENWEATHER_KEY```
+   ```PORT=3001```
+4. Install Dependencies
+   ``cd api``
+   ``npm install``
+   Navigate back to the WeatherTrendsProject directory, and do the same in `./web`
+5. Open a second command prompt.
+6. Have one command prompt at ./api, and the other at ./web
 7. On both cmds, run the following
   ``npm run dev``
-  This should appear for the ./web cmd
+  This should appear for the ./web command prompt (runs on port 5173)
    ![A line saying Local: http://localhost:5173](refs/WebSuccessfulInit.png)
-  And this on the ./api
+  And this on the ./api command prompt (runs on port 3001)
    ![A line saying Local: http://localhost:3001](refs/ApiSuccessfulInit.png)
+8. Upon running, navigate to [http://localhost:5173](http://localhost:5173), and you should be able to use the application from there.
+   ![A photo of the landing page](refs/ViennaData.png)
