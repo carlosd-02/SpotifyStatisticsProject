@@ -58,4 +58,4 @@ The project is still in its initial stages. I have a basic front and back end go
   And this on the ./api command prompt (runs on port 3001)
    ![A line saying Local: http://localhost:3001](refs/ApiSuccessfulInit.png)
 8. Upon running, navigate to [http://localhost:5173](http://localhost:5173), and you should be able to use the application from there.
-   ![A photo of the landing page](refs/ViennaData.png)
+   ![A photo of the landing page](refs/LandingPage.png)
