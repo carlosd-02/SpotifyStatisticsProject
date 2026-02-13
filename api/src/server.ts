@@ -110,6 +110,8 @@ app.get('/api/weather', async (req, res) => {
     const weatherResponse = await fetch(url);
     const weatherData = await weatherResponse.json();
 
+    console.log("Raw weather data:", weatherData);
+
     if (!weatherResponse.ok) {
         console.error('Error response from OpenWeather:', weatherData);
         return res.status(weatherResponse.status).json({ error: weatherData.message || 'Failed to fetch weather data' });

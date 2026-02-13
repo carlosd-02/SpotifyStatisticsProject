@@ -1,13 +1,22 @@
+import React from 'react';
 import { fetchWeatherData, type WeatherDTO } from './api/weather';
 
 export default async function retrieveData(country: string, city: string, unit: string, state?: string) {
     console.log(`Fetching weather data for ${city}, ${state ? state + ', ' : ''}${country} with units: ${unit}`);
     const weatherData = await fetchWeatherData({ country, city, units: unit, state });
+    console.log('Received weather data:', weatherData);
 
+    return renderData(weatherData);
+}
+
+export function renderData(weatherData: WeatherDTO | { error: string }) {
+    console.log('Rendering weather data:', weatherData);
     return (
         <div>
-            {weatherData && 'error' in weatherData ? (
-                <p>Error: {weatherData.error}</p>
+            {!weatherData? (
+                <p color='red'>Error retrieving weather data.</p>
+            ) : 'error' in weatherData ? (
+                <p color='red'>weatherData Error: {weatherData.error}</p>
             ) : (
                 <div>
                     <h2>Weather in {weatherData.location}</h2>

@@ -32,11 +32,20 @@ export async function fetchWeatherData(params: WeatherParams): Promise<WeatherDT
     console.log(`Received response with status: ${response.status}`);
     const data = await response.json();
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch weather data');
+        console.error('Error response from API:', data);
+        return { error: data.message || 'Unknown error' };
     }
 
     console.log('Parsed weather data:', data);
 
     return data as WeatherDTO;
+}
+
+export function dataToWeatherDTO(data: any): WeatherDTO {
+    try{
+        return data as WeatherDTO;
+    } catch (e) {
+        console.error('Error converting data to WeatherDTO:', e);
+        return {} as WeatherDTO;
+    }
 }

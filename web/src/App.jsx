@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import countryData from './data/country_codes.json';
 import stateData from './data/state_codes.json'; 
