@@ -36,5 +36,5 @@ jobs:
           sudo npm run test
       - name: Run tests on server
         run: |-
-          cd ../api
+          cd api
           sudo npm run test
