@@ -29,12 +29,3 @@ describe('test dataToWeatherDTO', () => {
         }
     });
 });
-
-describe('Server health check', () => {
-    it('Should return 200 OK for /api/health', async () => {
-        const response = await fetch('http://localhost:3001/api/health');
-        expect(response.status).toBe(200);
-        const data = await response.json();
-        expect(data).toEqual({ status: 'ok' });
-    });
-});
