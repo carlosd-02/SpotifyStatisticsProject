@@ -14,6 +14,13 @@ lerna-debug.log*
 ./web/node_modules
 ./web/dist
 *.local
+node_modules
+dist
+
+# Environment variables
+api/.env
+api/.env.local
+api/.env.*.local
 
 # Editor directories and files
 .vscode/*

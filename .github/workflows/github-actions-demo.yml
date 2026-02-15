@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies on web and api directories
         run: |
           cd web && sudo npm install
-          cd ../api && sudo npm install
+          cd ../api && sudo npm install && sudo npm install jsdom
       - name: Run tests on web
         run: |-
           cd web
