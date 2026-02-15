@@ -31,6 +31,6 @@ jobs:
           cd web && sudo npm install
           cd ../api && sudo npm install
       - name: Run tests on web
-        run: cd web && npm run test
+        run: cd web && sudo npm run test
       - name: Run tests on server
-        run: cd ../api && npm run test
+        run: cd ../api && sudo npm run test
