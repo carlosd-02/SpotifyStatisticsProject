@@ -28,8 +28,10 @@ jobs:
           node-version: '14'
       - name: Install dependencies on web and api directories
         run: |
-          cd web && sudo npm install
-          cd ../api && sudo npm install
+          cd web 
+          sudo npm install
+          cd ../api
+          sudo npm install
       - name: Run tests on web
         run: cd web && sudo npm run test
       - name: Run tests on server
