@@ -1,7 +1,13 @@
-import { isRecord } from '../server.ts';
-import { describe, it, expect } from 'vitest';
-describe('Helper Functions', () => {
-    it('should correctly determine if param is a record', () => {
-        expect(true).toBe(true); // empty object
-    });
+import { describe, it, expect } from "vitest";
+import request from "supertest";
+import { createApp } from "../app";
+
+describe("GET /api/health", () => {
+  it("returns ok true", async () => {
+    const app = createApp();
+    const res = await request(app).get("/api/health");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ status: 'ok' });
+  });
 });
