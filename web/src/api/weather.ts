@@ -16,6 +16,7 @@ export type WeatherParams = {
 }
 
 export async function fetchWeatherData(params: WeatherParams): Promise<WeatherDTO | { error: string }> {
+    try {
     const urlParams = new URLSearchParams({
         city: params.city,
         country: params.country,
@@ -28,6 +29,7 @@ export async function fetchWeatherData(params: WeatherParams): Promise<WeatherDT
     }
 
     console.log(`Constructed URL: /api/weather?${urlParams.toString()}`);
+    console.log(`Making API call to /api/weather:`);
     const response = await fetch(`/api/weather?${urlParams.toString()}`);
     console.log(`Received response with status: ${response.status}`);
     const data = await response.json();
@@ -39,6 +41,10 @@ export async function fetchWeatherData(params: WeatherParams): Promise<WeatherDT
     console.log('Parsed weather data:', data);
 
     return data as WeatherDTO;
+    } catch (error) {
+        console.error('Error fetching weather data:', error);
+        return { error: 'Failed to fetch weather data or data is empty. Please check if server is running.' };
+    }
 }
 
 export function dataToWeatherDTO(data: any): WeatherDTO {

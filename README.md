@@ -59,3 +59,15 @@ The project is still in its initial stages. I have a basic front and back end go
    ![A line saying Local: http://localhost:3001](refs/ApiSuccessfulInit.png)
 8. Upon running, navigate to [http://localhost:5173](http://localhost:5173), and you should be able to use the application from there.
    ![A photo of the landing page](refs/LandingPage.png)
+
+# Error Guide
+1. "Invalid API key. Please see https://openweathermap.org/faq#error401 for more info."
+   - Have you obtained an API key? (No. 2 above)
+   - If you have an API key, ensure it is configured in your ``api/.env`` file. 
+   - If you have no ``.env`` file, create one directly by copying ``api/.env.example`` and configure your API key in the new ``api/.env`` file.
+   - Once your API key is configured, you MUST restart your app (``npm run dev`` in the ``/api`` directory). ``.env`` configurations are reloaded at the beginning of the process and will not update until you restart.
+2. "JSON.parse: unexpected end of data at line 1 column 1 of the JSON data"
+   - This means the data is empty or otherwise unable to be retrieved.
+   - This has happened to me before when I forget to start the server while leaving the front-end running. Let me know if there are other contexts where this happens.
+
+If there are any other issues or edge cases you find, please let me know. This project is actively being built bit by bit.
