@@ -29,13 +29,13 @@ export async function fetchWeatherData(params: WeatherParams): Promise<WeatherDT
     }
 
     console.log(`Constructed URL: /api/weather?${urlParams.toString()}`);
-    console.log(`Making API call to /api/weather with params:`, params);
+    console.log(`Making API call to /api/weather:`);
     const response = await fetch(`/api/weather?${urlParams.toString()}`);
     console.log(`Received response with status: ${response.status}`);
     const data = await response.json();
     if (!response.ok) {
         console.error('Error response from API:', data);
-        return { error: data.error + '; If this is an API missing error. Consider checking your API key in your .env file. See README for more details.' || 'Unknown error' };
+        return { error: data.message || 'Unknown error' };
     }
 
     console.log('Parsed weather data:', data);
