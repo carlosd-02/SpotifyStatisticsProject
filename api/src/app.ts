@@ -2,15 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-type WeatherDTO = {
-  location: string;
-  temp: number | undefined;
-  feelsLike: number | undefined;
-  humidity: number | undefined;
-  description: string | undefined;
-  units: string;
-  fetchedAt: string; // ISO string
-};
+import { WeatherDTO } from './types';
 
 function isRecord(value: any): value is Record<string, any> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -75,6 +67,7 @@ export function createApp() {
 
     const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
     const API_KEY = process.env.OPENWEATHER_API_KEY;
+    console.log("API Key loaded:", API_KEY ? "Yes" : "No");
     const ALLOWED_UNITS = new Set(['standard', 'metric', 'imperial']);
 
 
