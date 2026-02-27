@@ -76,11 +76,11 @@ export function createApp() {
     });
 
     app.get('/api/weather', async (req, res) => {
-        if (!API_KEY) {
-            return res.status(500).json({ error: 'API key not configured' });
-        }
-
         console.log("Received request with query:", req.query);
+
+        if (!API_KEY) {
+            return res.status(500).json({ message: 'API key is missing. Please check your .env file. See README for more details.' });
+        }
 
         const city = String(req.query.city ?? "").trim();
         const country = String(req.query.country ?? "").trim();
@@ -107,7 +107,8 @@ export function createApp() {
 
         if (!weatherResponse.ok) {
             console.error('Error response from OpenWeather:', weatherData);
-            return res.status(weatherResponse.status).json({ error: weatherData.message || 'Failed to fetch weather data' });
+            console.log('message: ', weatherData.message);
+            return res.status(weatherResponse.status).json({ message: weatherData.message + ' Consider checking inputs, API key, and README.' || 'Failed to fetch weather data' });
         }
 
         const weatherDTO = getWeatherDTO(weatherData, units);
