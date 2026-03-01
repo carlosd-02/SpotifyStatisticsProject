@@ -15,29 +15,30 @@ describe("GET /api/health", () => {
 
 describe("GET /api/weather", () => {
     it("returns data when upstream succeeds (fetch mocked)", async () => {
-    const fakePayload = {
-      name: "Irvine",
-      sys: { country: "US" },
-      main: { temp: 21, feels_like: 20, humidity: 30 },
-      weather: [{ description: "few clouds" }],
-    };
+        vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
+        const fakePayload = {
+        name: "Irvine",
+        sys: { country: "US" },
+        main: { temp: 21, feels_like: 20, humidity: 30 },
+        weather: [{ description: "few clouds" }],
+        };
 
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => ({
-        ok: true,
-        status: 200,
-        json: async () => fakePayload,
-      })) as any
-    );
+        vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => ({
+            ok: true,
+            status: 200,
+            json: async () => fakePayload,
+        })) as any
+        );
 
-    const app = createApp();
-    const res = await request(app).get("/api/weather?city=Irvine&country=US&units=metric");
+        const app = createApp();
+        const res = await request(app).get("/api/weather?city=Irvine&country=US&units=metric");
 
-    expect(res.status).toBe(200);
-    // adapt these assertions to your DTO shape
-    expect(res.body.location).toContain("Irvine");
-    expect(res.body.temp).toBe(21);
+        expect(res.status).toBe(200);
+        // adapt these assertions to your DTO shape
+        expect(res.body.location).toContain("Irvine");
+        expect(res.body.temp).toBe(21);
     });
 
     it("returns error for missing API key", async () => {
@@ -52,6 +53,7 @@ describe("GET /api/weather", () => {
     });
 
     it("returns error for missing required params", async () => {
+        vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
         const app = createApp();
         const res = await request(app).get("/api/weather");
         expect(res.status).toBe(400);
