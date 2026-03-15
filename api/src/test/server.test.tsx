@@ -41,6 +41,9 @@ describe("GET /api/weather", () => {
         expect(res.body.temp).toBe(21);
     });
 
+    // The next plan is to make new test cases that call the API, it SHOULD fail and have the correct error message
+    // Another case will have an incorrect name for a city and have a specific error message from the API, and we will check that it is correctly propagated to the client
+
     it("returns error for missing API key", async () => {
         const originalApiKey = process.env.OPENWEATHER_API_KEY;
         delete process.env.OPENWEATHER_API_KEY; // Temporarily remove API key
