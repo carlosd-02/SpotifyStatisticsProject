@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -76,6 +76,7 @@ export function createApp() {
     });
 
     app.get('/api/weather', async (req, res) => {
+        try {
         console.log("Received request with query:", req.query);
 
         if (!API_KEY) {
@@ -108,7 +109,8 @@ export function createApp() {
         if (!weatherResponse.ok) {
             console.error('Error response from OpenWeather:', weatherData);
             console.log('message: ', weatherData.message);
-            return res.status(weatherResponse.status).json({ message: weatherData.message + ' Consider checking inputs, API key, and README.' || 'Failed to fetch weather data' });
+            return res.status(weatherResponse.status).json( weatherData.message.isEmpty ? 
+                { message: 'Failed to fetch weather data. Please consider checking inputs, API key, and README.' } : { message: weatherData.message });
         }
 
         const weatherDTO = getWeatherDTO(weatherData, units);
@@ -121,6 +123,11 @@ export function createApp() {
         }
 
         return res.status(200).json(weatherDTO);
+        } catch (error) {
+        console.error("Error creating app:", error);
+        console.error("Network error calling OpenWeather:", error);
+        return res.status(502).json({ message: "Failed to reach OpenWeather. Please try again later." });
+        }
     });
 
     return app;

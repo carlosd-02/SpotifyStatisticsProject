@@ -42,7 +42,41 @@ describe("GET /api/weather", () => {
     });
 
     // The next plan is to make new test cases that call the API, it SHOULD fail and have the correct error message
+
     // Another case will have an incorrect name for a city and have a specific error message from the API, and we will check that it is correctly propagated to the client
+    // It should give the message "city not found Consider checking inputs, API key, and README."
+    it("returns error for invalid city name", async () => {
+        vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
+        const fakeErrorResponse = {
+            cod: "404",
+            message: "city not found",
+        };
+        vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => ({
+            ok: false,
+            status: 404,
+            json: async () => fakeErrorResponse,
+        })) as any
+        );
+    });
+
+    it("returns error if city is whitespace only", async () => {
+        vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
+        const app = createApp();
+        const res = await request(app).get("/api/weather").query({ city: "   ", country: "US", units: "metric" });
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ message: "Query params 'city' and 'country' are required" });
+    });
+
+    it("returns error if country is whitespace only", async () => {
+        vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
+        const app = createApp();
+        const res = await request(app).get("/api/weather").query({ city: "Irvine", country: "   ", units: "metric" });
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ message: "Query params 'city' and 'country' are required" });
+    });
+
 
     it("returns error for missing API key", async () => {
         const originalApiKey = process.env.OPENWEATHER_API_KEY;
@@ -61,5 +95,67 @@ describe("GET /api/weather", () => {
         const res = await request(app).get("/api/weather");
         expect(res.status).toBe(400);
         expect(res.body).toEqual({ message: "Query params 'city' and 'country' are required" });
+    });
+
+    it("resolves to metric units when invalid units provided", async () => {
+        vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
+        const fakePayload = {
+        name: "Irvine",
+        sys: { country: "US" },
+        main: { temp: 21, feels_like: 20, humidity: 30 },
+        weather: [{ description: "few clouds" }],
+        };
+
+        vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => ({
+            ok: true,
+            status: 200,
+            json: async () => fakePayload,
+        })) as any
+        );
+        const app = createApp();
+        const res = await request(app).get("/api/weather?city=Irvine&country=US&units=invalid_unit");
+        expect(res.status).toBe(200);
+        expect(res.body.units).toBe("metric");
+    });
+
+    it("should succeed with special characters in city name", async () => {
+        vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
+        const fakePayload = {
+        name: "São Paulo",
+        sys: { country: "BR" },
+        main: { temp: 25, feels_like: 27, humidity: 80 },
+        weather: [{ description: "clear sky" }],
+        };
+        vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => ({
+            ok: true,
+            status: 200,
+            json: async () => fakePayload,
+        })) as any
+        );
+        const app = createApp();
+        const res = await request(app).get("/api/weather?city=São Paulo&country=BR&units=metric");
+        expect(res.status).toBe(200);
+    });
+
+    it("should properly handle network errors gracefully", async () => {
+        vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
+        vi.stubGlobal(
+        "fetch",
+        vi.fn(async () => {
+            throw new Error("Network error");
+        }) as any
+        );
+        const app = createApp();
+        const res = await request(app).get("/api/weather?city=Irvine&country=US&units=metric");
+        expect(res.status).toBe(502);
+        console.log("status:", res.status);
+        console.log("content-type:", res.headers["content-type"]);
+        console.log("text:", res.text);
+        console.log("body:", res.body);
+        expect(res.body).toEqual({ message: "Failed to reach OpenWeather. Please try again later." });
     });
 });
