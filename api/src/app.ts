@@ -1,8 +1,8 @@
 import express, { NextFunction } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
 import { WeatherDTO } from './types';
+import { BASE_URL, API_KEY, ALLOWED_UNITS, DEFAULT_UNIT } from './constants/weather';
 
 function isRecord(value: any): value is Record<string, any> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -58,17 +58,12 @@ function getWeatherDTO(data: any, units: string): WeatherDTO | null {
     };
 }
 
-dotenv.config();
-
 export function createApp() {
     const app = express();
     app.use(express.json());
     app.use(cors());
-
-    const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
-    const API_KEY = process.env.OPENWEATHER_API_KEY;
+    
     console.log("API Key loaded:", API_KEY ? "Yes" : "No");
-    const ALLOWED_UNITS = new Set(['standard', 'metric', 'imperial']);
 
 
     app.get('/api/health', (req, res) => {
