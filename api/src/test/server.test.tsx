@@ -21,12 +21,6 @@ describe("GET /api/weather", () => {
         vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
     });
 
-    afterEach(() => {
-        vi.unstubAllGlobals();
-        vi.unstubAllEnvs();
-        vi.restoreAllMocks();
-    });
-
     it("returns data when upstream succeeds (fetch mocked)", async () => {
         const fakePayload = {
         name: "Irvine",
@@ -126,7 +120,8 @@ describe("GET /api/weather", () => {
 
 
     it("returns error for missing API key", async () => {
-        delete process.env.OPENWEATHER_API_KEY; // Temporarily remove API key
+        // Temporarily remove API key
+        vi.stubEnv("OPENWEATHER_API_KEY", undefined);
         const app = createApp();
         const res = await request(app)            .get("/api/weather")
             .query({ country: "US", city: "New York", units: "metric" });
