@@ -2,10 +2,11 @@ import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import request from "supertest";
 
 import { createApp } from "../app";
+const TEST_CONFIG = { openWeatherKey: "fake_api_key" } as const;
 
 describe("GET /api/health", () => {
   it("returns ok true", async () => {
-    const app = createApp();
+    const app = createApp(TEST_CONFIG);
     const res = await request(app).get("/api/health");
 
     expect(res.status).toBe(200);
@@ -37,7 +38,7 @@ describe("GET /api/weather", () => {
         })) as any
         );
 
-        const app = createApp({ openWeatherKey: "fake" });
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather?city=Irvine&country=US&units=metric");
 
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
@@ -73,7 +74,7 @@ describe("GET /api/weather", () => {
             json: async () => fakeErrorResponse,
         })) as any
         );
-        const app = createApp({ openWeatherKey: "fake" });
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather").query({city: "invalid_city", country: "US"});
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(404);
@@ -93,7 +94,7 @@ describe("GET /api/weather", () => {
             json: async () => fakeErrorResponse,
         })) as any
         );
-        const app = createApp({ openWeatherKey: "fake" });
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather").query({city: "London", country: "NOT"});
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(404);
@@ -101,7 +102,7 @@ describe("GET /api/weather", () => {
     });
 
     it("returns error if city is whitespace only", async () => {
-        const app = createApp({ openWeatherKey: "fake" });
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather").query({ city: "   ", country: "US", units: "metric" });
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(400);
@@ -110,7 +111,7 @@ describe("GET /api/weather", () => {
 
     it("returns error if country is whitespace only", async () => {
         vi.stubEnv("OPENWEATHER_API_KEY", "fake_api_key");
-        const app = createApp({ openWeatherKey: "fake" });
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather").query({ city: "Irvine", country: "   ", units: "metric" });
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(400);
@@ -129,7 +130,7 @@ describe("GET /api/weather", () => {
     });
 
     it("returns error for missing required params", async () => {
-        const app = createApp();
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather");
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(400);
@@ -152,7 +153,7 @@ describe("GET /api/weather", () => {
             json: async () => fakePayload,
         })) as any
         );
-        const app = createApp({ openWeatherKey: "fake" });
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather?city=Irvine&country=US&units=invalid_unit");
         expect(res.status).toBe(200);
         expect(res.body.units).toBe("metric");
@@ -173,7 +174,7 @@ describe("GET /api/weather", () => {
             json: async () => fakePayload,
         })) as any
         );
-        const app = createApp({ openWeatherKey: "fake" });
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather?city=São Paulo&country=BR&units=metric");
         expect(res.status).toBe(200);
     });
@@ -185,7 +186,7 @@ describe("GET /api/weather", () => {
             throw new Error("Network error");
         }) as any
         );
-        const app = createApp({ openWeatherKey: "fake" });
+        const app = createApp(TEST_CONFIG);
         const res = await request(app).get("/api/weather?city=Irvine&country=US&units=metric");
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(502);
