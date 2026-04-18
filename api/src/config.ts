@@ -7,5 +7,14 @@ function requiredEnv(name: string): string {
   return v;
 }
 
-export const PORT = Number(process.env.PORT ?? 3001);
-export const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY ?? "";
+export type AppConfig = {
+  openWeatherKey?: string;
+  port: number;
+};
+
+export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
+  return {
+    openWeatherKey: env.OPENWEATHER_API_KEY, // read when called
+    port: Number(env.PORT ?? 3001),
+  };
+}

@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import { WeatherDTO } from './types';
 import { BASE_URL, API_KEY, ALLOWED_UNITS, DEFAULT_UNIT } from './constants/weather';
+import { loadConfig, type AppConfig } from "./config";
 
 function isRecord(value: any): value is Record<string, any> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -58,12 +59,13 @@ function getWeatherDTO(data: any, units: string): WeatherDTO | null {
     };
 }
 
-export function createApp() {
+export function createApp(overrides: Partial<AppConfig> = {}) {
+    const config = { ...loadConfig(), ...overrides };    
     const app = express();
     app.use(express.json());
     app.use(cors());
     
-    console.log("API Key loaded:", API_KEY ? "Yes" : "No");
+    console.log("API Key loaded:", config.openWeatherKey ? "Yes" : "No");
 
 
     app.get('/api/health', (req, res) => {
@@ -74,7 +76,7 @@ export function createApp() {
         try {
         console.log("Received request with query:", req.query);
 
-        if (!API_KEY) {
+        if (!config.openWeatherKey) {
             return res.status(500).json({ message: 'API key is missing. Please check your .env file. See README for more details.' });
         }
 
@@ -91,7 +93,7 @@ export function createApp() {
         const q = state ? `${city},${state},${country}` : `${city},${country}`;
         const url = new URL(BASE_URL);
         url.searchParams.append('q', q);
-        url.searchParams.append('appid', API_KEY);
+        url.searchParams.append('appid', config.openWeatherKey);
         url.searchParams.append('units', units);
 
         console.log("Parsed query:", { city, state, country, units });
