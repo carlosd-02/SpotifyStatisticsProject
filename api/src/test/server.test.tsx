@@ -2,6 +2,7 @@ import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import request from "supertest";
 
 import { createApp } from "../app";
+import { ERROR_MESSAGES } from "../constants/weather";
 const TEST_CONFIG = { openWeatherKey: "fake_api_key" } as const;
 
 describe("GET /api/health", () => {
@@ -106,7 +107,7 @@ describe("GET /api/weather", () => {
         const res = await request(app).get("/api/weather").query({ city: "   ", country: "US", units: "metric" });
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(400);
-        expect(res.body).toEqual({ message: "Query params 'city' and 'country' are required" });
+        expect(res.body).toEqual({ message: ERROR_MESSAGES.MISSING_PARAMS });
     });
 
     it("returns error if country is whitespace only", async () => {
@@ -115,7 +116,7 @@ describe("GET /api/weather", () => {
         const res = await request(app).get("/api/weather").query({ city: "Irvine", country: "   ", units: "metric" });
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(400);
-        expect(res.body).toEqual({ message: "Query params 'city' and 'country' are required" });
+        expect(res.body).toEqual({ message: ERROR_MESSAGES.MISSING_PARAMS });
     });
 
 
@@ -126,7 +127,7 @@ describe("GET /api/weather", () => {
             .query({ country: "US", city: "New York", units: "metric" });
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(500);
-        expect(res.body).toEqual({ message: 'API key is missing. Please check your .env file. See README for more details.' });
+        expect(res.body).toEqual({ message: ERROR_MESSAGES.API_KEY_MISSING });
     });
 
     it("returns error for missing required params", async () => {
@@ -134,7 +135,7 @@ describe("GET /api/weather", () => {
         const res = await request(app).get("/api/weather");
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(400);
-        expect(res.body).toEqual({ message: "Query params 'city' and 'country' are required" });
+        expect(res.body).toEqual({ message: ERROR_MESSAGES.MISSING_PARAMS });
     });
 
     it("resolves to metric units when invalid units provided", async () => {
@@ -190,6 +191,6 @@ describe("GET /api/weather", () => {
         const res = await request(app).get("/api/weather?city=Irvine&country=US&units=metric");
         expect(res.headers["content-type"]).toMatch("application\/json; charset=utf-8");
         expect(res.status).toBe(502);
-        expect(res.body).toEqual({ message: "Failed to reach OpenWeather. Please try again later." });
+        expect(res.body).toEqual({ message: ERROR_MESSAGES.NETWORK_ERROR });
     });
 });
