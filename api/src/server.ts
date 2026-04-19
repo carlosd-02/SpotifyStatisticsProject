@@ -1,7 +1,8 @@
 import { createApp } from './app';
-import { PORT } from './config'
+import { loadConfig } from './config'
 
-const app = createApp();
-app.listen(PORT, () => {
-  console.log(`API listening on http://localhost:${PORT}`);
+const config = loadConfig();
+const app = createApp(config);
+app.listen(config.port, () => {
+  console.log(`API listening on http://localhost:${config.port}`);
 });

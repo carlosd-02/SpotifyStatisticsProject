@@ -3,7 +3,7 @@ import cors from 'cors';
 
 import { WeatherDTO } from './types';
 import { BASE_URL, ALLOWED_UNITS, DEFAULT_UNIT, ERROR_MESSAGES} from './constants/weather';
-import { loadConfig, type AppConfig } from "./config";
+import { AppConfig } from './config';
 
 function isRecord(value: any): value is Record<string, any> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -59,8 +59,7 @@ function getWeatherDTO(data: any, units: string): WeatherDTO | null {
     };
 }
 
-export function createApp(overrides: Partial<AppConfig> = {}) {
-    const config = { ...loadConfig(), ...overrides };    
+export function createApp(config: AppConfig) {
     const app = express();
     app.use(express.json());
     app.use(cors());
