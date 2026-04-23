@@ -66,8 +66,6 @@ export function createApp() {
     app.use(cors());
 
     const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
-    const API_KEY = process.env.OPENWEATHER_API_KEY;
-    console.log("API Key loaded:", API_KEY ? "Yes" : "No");
     const ALLOWED_UNITS = new Set(['standard', 'metric', 'imperial']);
 
 
@@ -78,10 +76,6 @@ export function createApp() {
     app.get('/api/weather', async (req, res) => {
         try {
         console.log("Received request with query:", req.query);
-
-        if (!API_KEY) {
-            return res.status(500).json({ message: 'API key is missing. Please check your .env file. See README for more details.' });
-        }
 
         const city = String(req.query.city ?? "").trim();
         const country = String(req.query.country ?? "").trim();
@@ -96,7 +90,6 @@ export function createApp() {
         const q = state ? `${city},${state},${country}` : `${city},${country}`;
         const url = new URL(BASE_URL);
         url.searchParams.append('q', q);
-        url.searchParams.append('appid', API_KEY);
         url.searchParams.append('units', units);
 
         console.log("Parsed query:", { city, state, country, units });
