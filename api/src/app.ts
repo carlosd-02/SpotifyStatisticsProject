@@ -1,8 +1,9 @@
 import express, { NextFunction } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
 import { WeatherDTO } from './types';
+import { BASE_URL, ALLOWED_UNITS, DEFAULT_UNIT, ERROR_MESSAGES} from './constants/weather';
+import { AppConfig } from './config';
 
 function isRecord(value: any): value is Record<string, any> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -58,15 +59,10 @@ function getWeatherDTO(data: any, units: string): WeatherDTO | null {
     };
 }
 
-dotenv.config();
-
-export function createApp() {
+export function createApp(config: AppConfig) {
     const app = express();
     app.use(express.json());
     app.use(cors());
-
-    const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
-    const ALLOWED_UNITS = new Set(['standard', 'metric', 'imperial']);
 
 
     app.get('/api/health', (req, res) => {
@@ -80,11 +76,11 @@ export function createApp() {
         const city = String(req.query.city ?? "").trim();
         const country = String(req.query.country ?? "").trim();
         const state = String(req.query.state ?? "").trim();
-        const units = ALLOWED_UNITS.has(String(req.query.units ?? "metric")) ? 
-            String(req.query.units) : "metric";
+        const units = ALLOWED_UNITS.has(String(req.query.units ?? DEFAULT_UNIT)) ? 
+            String(req.query.units) : DEFAULT_UNIT;
 
         if (!city || !country) {
-            return res.status(400).json({ message: "Query params 'city' and 'country' are required" });
+            return res.status(400).json({ message: ERROR_MESSAGES.MISSING_PARAMS });
         }
 
         const q = state ? `${city},${state},${country}` : `${city},${country}`;
@@ -103,12 +99,13 @@ export function createApp() {
             console.error('Error response from OpenWeather:', weatherData);
             console.log('message: ', weatherData.message);
             return res.status(weatherResponse.status).json( weatherData.message.isEmpty ? 
-                { message: 'Failed to fetch weather data. Please consider checking inputs, API key, and README.' } : { message: weatherData.message });
+                { message: ERROR_MESSAGES.FETCH_ERROR } : { message: weatherData.message });
         }
 
         const weatherDTO = getWeatherDTO(weatherData, units);
         if (!weatherDTO) {
             return res.status(502).json({ 
+                message: ERROR_MESSAGES.PARSE_ERROR,
                 status: 502,
                 error: 'Failed to parse weather data',
                 response: weatherData
@@ -119,7 +116,7 @@ export function createApp() {
         } catch (error) {
         console.error("Error creating app:", error);
         console.error("Network error calling OpenWeather:", error);
-        return res.status(502).json({ message: "Failed to reach OpenWeather. Please try again later." });
+        return res.status(502).json({ message: ERROR_MESSAGES.NETWORK_ERROR });
         }
     });
 
