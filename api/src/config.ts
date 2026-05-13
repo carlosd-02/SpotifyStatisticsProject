@@ -8,13 +8,11 @@ function requiredEnv(name: string): string {
 }
 
 export type AppConfig = {
-  openWeatherKey?: string;
   port: number;
 };
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): AppConfig {
   return {
-    openWeatherKey: env.OPENWEATHER_API_KEY, // read when called
     port: Number(env.PORT ?? 3001),
   };
 }
